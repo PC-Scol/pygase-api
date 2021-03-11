@@ -38,3 +38,12 @@ Dans le fichier `api.py`, renseigner le nom de votre environnement au niveau de 
 ```
 > source .env/bin/activate
 > ./structure --help
+Usage: structure [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  lire
+  liste
+> ./stucture liste
