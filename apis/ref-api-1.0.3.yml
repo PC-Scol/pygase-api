@@ -1,0 +1,2804 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: API référentiel
+  description: Liste l'ensemble des services et des opérations disponibles dans le
+    module Referentiel
+servers:
+- url: http://api/v1/ref
+tags:
+- name: metaDonneesNomenclature
+  description: Les méta données des nomenclatures pour généricitré pour App
+- name: nomenclature
+  description: Services liés aux nomenclatures
+- name: parametrage
+  description: Services liés aux paramétrages
+- name: personne
+  description: Les services liés aux personnes
+- name: structure
+  description: Les services liés aux structures
+security:
+- idTokenAuth: []
+paths:
+  /nomenclatures-disponibles:
+    get:
+      tags:
+      - metaDonneesNomenclature
+      summary: Liste des nomenclatures disponibles avec informations
+      operationId: lireListeNomenclaturesDisponibles
+      responses:
+        '200':
+          description: Les nomenclatures disponibles ont été récupérés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NomenclatureAffichage'
+  /estNomenclatureStandard/{codeNomenclature}:
+    get:
+      tags:
+      - metaDonneesNomenclature
+      summary: demande si une nomenclature est standard
+      operationId: estNomenclatureStandard
+      parameters:
+      - name: codeNomenclature
+        in: path
+        description: Le code de la nomenclature
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: true ou false
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /nomenclatures/{codeNomenclature}:
+    get:
+      tags:
+      - nomenclature
+      summary: Liste des nomenclatures
+      operationId: lireListe
+      parameters:
+      - $ref: '#/components/parameters/codeNomenclature'
+      responses:
+        '200':
+          description: Les nomenclatures ont été récupérées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nomenclature'
+  /nomenclatures/{codeNomenclature}/structure/{codeStructure}:
+    post:
+      tags:
+      - nomenclature
+      summary: Créer une nomenclature
+      operationId: creer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: La nomenclature à créer
+        required: true
+      responses:
+        '201':
+          description: La nomenclature a été créé
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/generer/structure/{codeStructure}:
+    get:
+      tags:
+      - nomenclature
+      summary: Code métier de nomenclature proposé en création
+      operationId: genererCode
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      responses:
+        '201':
+          description: Le code nomenclature a été généré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeGenere'
+  /nomenclatures/EtablissementEtranger/genererCode/prefix/{prefix}/structure/{codeStructure}:
+    get:
+      tags:
+      - nomenclature
+      summary: Code métier de nomenclature proposé en création
+      operationId: genererCodeEtablissementEtranger
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - name: prefix
+        in: path
+        description: Le préfix code de la nomenclature (ex 201)
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Le code nomenclature a été généré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeGenere'
+  /nomenclatures/{codeNomenclature}/verifier/structure/{codeStructure}:
+    post:
+      tags:
+      - nomenclature
+      summary: Créer une nomenclature sans enregistrer
+      operationId: creerSansEnregistrer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: La nomenclature pour tenter la création
+        required: true
+      responses:
+        '201':
+          description: La nomenclature a été créé sans erreur
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/creerouModifier/structure/{codeStructure}:
+    post:
+      tags:
+      - nomenclature
+      summary: Créer ou modifier une nomenclature
+      operationId: creerOuModifier
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: La nomenclature à créer ou à modifier
+        required: true
+      responses:
+        '200':
+          description: La nomenclature a été créé ou modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/code/{code}/dateDebutValidite/{dateDebutValidite}/structure/{codeStructure}:
+    delete:
+      tags:
+      - nomenclature
+      summary: Supprimer une nomenclature
+      operationId: supprimer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      responses:
+        '200':
+          description: La nomenclature est supprimé
+        '400':
+          description: Paramètres de requête non conformes
+    put:
+      tags:
+      - nomenclature
+      summary: Modifier une nomenclature
+      operationId: modifier
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: La nomenclature à modifier
+        required: true
+      responses:
+        '200':
+          description: La nomenclature est modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/code/{code}/dateDebutValidite/{dateDebutValidite}:
+    get:
+      tags:
+      - nomenclature
+      summary: Lire la nomenclature par la clé d'unicité (code, date de début de validité)
+      operationId: lire
+      parameters:
+      - $ref: '#/components/parameters/codeNomenclature'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      responses:
+        '200':
+          description: La nomenclature a été récupérée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+  /nomenclatures/numeroUai/{numeroUai}/dateDebutValidite/{dateDebutValidite}:
+    get:
+      tags:
+      - nomenclature
+      summary: Lire l'établissement français par la clé d'unicité (numéro UAI, date
+        de début de validité)
+      operationId: lireEtablissementFrancais
+      parameters:
+      - name: numeroUai
+        in: path
+        description: Le numéro UAI de l'établissement français
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/dateDebutValidite'
+      responses:
+        '200':
+          description: L'établissement français a été récupéré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+  /nomenclatures/numeroUai/{numeroUai}/dateDebutValidite/{dateDebutValidite}/structure/{codeStructure}:
+    delete:
+      tags:
+      - nomenclature
+      summary: Supprimer un établissement français
+      operationId: supprimerEtablissementFrancais
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - name: numeroUai
+        in: path
+        description: Le numéro UAI de l'établissement français
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/dateDebutValidite'
+      responses:
+        '200':
+          description: L'établissement français est supprimé
+        '400':
+          description: Paramètres de requête non conformes
+    put:
+      tags:
+      - nomenclature
+      summary: Modifier un établissement français
+      operationId: modifierEtablissementFrancais
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - name: numeroUai
+        in: path
+        description: Le numéro UAI de l'établissement français
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/dateDebutValidite'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: L'établissement français à modifier
+        required: true
+      responses:
+        '200':
+          description: L'établissement français est modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/code/{code}/dateDebutValidite/{dateDebutValidite}/verifier/structure/{codeStructure}:
+    put:
+      tags:
+      - nomenclature
+      summary: Modifier une nomenclature sans enregistrer
+      operationId: modifierSansEnregistrer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeNomenclature'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: La nomenclature à modifier sans enregistrer
+        required: true
+      responses:
+        '201':
+          description: La nomenclature est modifiée sans enregistrer
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/numeroUai/{numeroUai}/dateDebutValidite/{dateDebutValidite}/verifier/structure/{codeStructure}:
+    put:
+      tags:
+      - nomenclature
+      summary: Modifier un établissement français sans enregistrer
+      operationId: modifierSansEnregistrerEtablissementFrancais
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - name: numeroUai
+        in: path
+        description: Le numéro UAI de l'établissement français
+        required: true
+        schema:
+          type: string
+      - $ref: '#/components/parameters/dateDebutValidite'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: L'établissement français à modifier sans enregistrer
+        required: true
+      responses:
+        '201':
+          description: L'établissement français est modifiée sans enregistrer
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/rechercher:
+    post:
+      tags:
+      - nomenclature
+      summary: Liste des nomenclatures selon les critères de recherche sur les champs
+        de nomenclature
+      operationId: lireListeAvecCriteres
+      parameters:
+      - $ref: '#/components/parameters/codeNomenclature'
+      - name: operateurLogique
+        in: query
+        description: Opérateur AND ou OR
+        required: true
+        schema:
+          type: string
+          enum:
+          - AND
+          - OR
+          default: AND
+      requestBody:
+        $ref: '#/components/requestBodies/Predicats'
+      responses:
+        '200':
+          description: Les nomenclatures ont été récupérées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nomenclature'
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/{codeNomenclature}/numPage/{numPage}/nbOccurences/{nbOccurences}:
+    get:
+      tags:
+      - nomenclature
+      summary: Liste des nomenclatures avec pagination
+      operationId: lireListePage
+      parameters:
+      - $ref: '#/components/parameters/codeNomenclature'
+      - name: numPage
+        in: path
+        description: Numéro de la page courante
+        required: true
+        schema:
+          type: integer
+      - name: nbOccurences
+        in: path
+        description: Nombre d'occurences retournées par page
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Objet pagination qui contient la liste des nomenclatures
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pagination'
+  /nomenclatures/{codeNomenclature}/rechercher/numPage/{numPage}/nbOccurences/{nbOccurences}:
+    post:
+      tags:
+      - nomenclature
+      summary: Liste des nomenclatures selon les critères de recherche sur les champs
+        de nomenclature avec pagination
+      operationId: lireListeAvecCriteresPage
+      parameters:
+      - $ref: '#/components/parameters/codeNomenclature'
+      - name: numPage
+        in: path
+        description: Numéro de la page courante
+        required: true
+        schema:
+          type: integer
+      - name: nbOccurences
+        in: path
+        description: Nombre d'occurences retournées par page
+        required: true
+        schema:
+          type: integer
+      - name: operateurLogique
+        in: query
+        description: Opérateur AND ou OR
+        required: true
+        schema:
+          type: string
+          enum:
+          - AND
+          - OR
+          default: AND
+      requestBody:
+        $ref: '#/components/requestBodies/Predicats'
+      responses:
+        '200':
+          description: Objet pagination qui contient la liste des nomenclatures recherchées
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pagination'
+        '400':
+          description: Paramètres de requête non conformes
+  /nomenclatures/communes/codePostal/{codePostal}:
+    get:
+      tags:
+      - nomenclature
+      summary: Liste de communes en fonction du code postale
+      operationId: lireCommunes
+      parameters:
+      - name: codePostal
+        in: path
+        description: Le code postal
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Les communes ayant le code postal demandé
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nomenclature'
+  /parametrages/{codeParametrage}:
+    get:
+      tags:
+      - parametrage
+      summary: Liste des paramétrages
+      operationId: lireListe
+      parameters:
+      - $ref: '#/components/parameters/codeParametrage'
+      responses:
+        '200':
+          description: Les paramétrages ont été récupérés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nomenclature'
+  /parametrages/{codeParametrage}/structure/{codeStructure}:
+    post:
+      tags:
+      - parametrage
+      summary: Créer un paramétrage
+      operationId: creer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: Le paramétrage à créer
+        required: true
+      responses:
+        '201':
+          description: Le paramétrage a été créé
+        '400':
+          description: Paramètres de requête non conformes
+  /parametrages/{codeParametrage}/creerOuModifier/structure/{codeStructure}:
+    post:
+      tags:
+      - parametrage
+      summary: Créer ou modifier un paramétrage
+      operationId: creerOuModifier
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: Le paramétrage à créer ou à modifier
+        required: true
+      responses:
+        '200':
+          description: Le paramétrage a été créé ou modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+  /parametrages/{codeParametrage}/generer/structure/{codeStructure}:
+    get:
+      tags:
+      - parametrage
+      summary: Code métier du paramétrage proposé en création
+      operationId: genererCode
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      responses:
+        '201':
+          description: Le code paramétrage a été généré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeGenere'
+  /parametrages/{codeParametrage}/verifier/structure/{codeStructure}:
+    post:
+      tags:
+      - parametrage
+      summary: Créer un paramétrage sans enregistrer
+      operationId: creerSansEnregistrer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: Le paramétrage pour tenter la création
+        required: true
+      responses:
+        '201':
+          description: Le paramétrage a été créé sans erreur
+        '400':
+          description: Paramètres de requête non conformes
+  /parametrages/{codeParametrage}/code/{code}/dateDebutValidite/{dateDebutValidite}/structure/{codeStructure}:
+    delete:
+      tags:
+      - parametrage
+      summary: Supprimer un paramétrage
+      operationId: supprimer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      responses:
+        '200':
+          description: Le paramétrage est supprimé
+        '400':
+          description: Paramètres de requête non conformes
+    put:
+      tags:
+      - parametrage
+      summary: Modifier un paramétrage
+      operationId: modifier
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: Le paramétrage à modifier
+        required: true
+      responses:
+        '200':
+          description: Le paramétrage est modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+        '400':
+          description: Paramètres de requête non conformes
+  /parametrages/{codeParametrage}/code/{code}/dateDebutValidite/{dateDebutValidite}:
+    get:
+      tags:
+      - parametrage
+      summary: Lire la paramétrage par la clé d'unicité (code, date de début de validité)
+      operationId: lire
+      parameters:
+      - $ref: '#/components/parameters/codeParametrage'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      responses:
+        '200':
+          description: Le paramétrage a été récupéré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+  ? /parametrages/NatureTypeObjetFormation/code/{code}/dateDebutValidite/{dateDebutValidite}/codeOTF/{codeOTF}/dateDebutValiditeOTF/{dateDebutValiditeOTF}/structure/{codeStructure}
+  : delete:
+      tags:
+      - parametrage
+      summary: Supprimer une nature de type de formation
+      operationId: supprimerNatureTypeObjetFormation
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      - name: codeOTF
+        in: path
+        description: Le code métier de type objet de formation
+        required: true
+        schema:
+          type: string
+      - name: dateDebutValiditeOTF
+        in: path
+        description: La date de début de type objet de formation
+        required: true
+        schema:
+          type: string
+          format: date
+      responses:
+        '200':
+          description: La nature de type de formation est supprimée
+        '400':
+          description: Paramètres de requête non conformes
+  /parametrages/NatureTypeObjetFormation/structure/{codeStructure}:
+    put:
+      tags:
+      - parametrage
+      summary: Modifier une nature de type objet de formation
+      operationId: modifierNatureTypeObjetFormation
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        $ref: '#/components/requestBodies/Parametrages'
+      responses:
+        '200':
+          description: La nature de type objet de formation est modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Nomenclature'
+  /parametrages/{codeParametrage}/code/{code}/dateDebutValidite/{dateDebutValidite}/verifier/structure/{codeStructure}:
+    put:
+      tags:
+      - parametrage
+      summary: Modifier une paramétrage sans enregistrer
+      operationId: modifierSansEnregistrer
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      - $ref: '#/components/parameters/codeParametrage'
+      - $ref: '#/components/parameters/code'
+      - $ref: '#/components/parameters/dateDebutValidite'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Nomenclature'
+        description: La paramétrage à modifier sans enregistrer
+        required: true
+      responses:
+        '201':
+          description: La paramétrage est modifiée sans enregistrer
+  /parametrages/NatureTypeObjetFormation/verifier/structure/{codeStructure}:
+    put:
+      tags:
+      - parametrage
+      summary: Modifier une nature de type objet de formation sans enregistrer
+      operationId: modifierSansEnregistrerNatureTypeObjetFormation
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        $ref: '#/components/requestBodies/Parametrages'
+      responses:
+        '201':
+          description: La nature type objet de formation est modifiée sans enregistrer
+  /parametrages/{codeParametrage}/rechercher:
+    post:
+      tags:
+      - parametrage
+      summary: Liste des paramétrages selon les critères de recherche sur les champs
+        de parametrage
+      operationId: lireListeAvecCriteres
+      parameters:
+      - $ref: '#/components/parameters/codeParametrage'
+      - name: operateurLogique
+        in: query
+        description: Opérateur AND ou OR
+        required: true
+        schema:
+          type: string
+          enum:
+          - AND
+          - OR
+          default: AND
+      requestBody:
+        $ref: '#/components/requestBodies/Predicats'
+      responses:
+        '200':
+          description: Les paramétrages ont été récupérées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Nomenclature'
+        '400':
+          description: Paramètres de requête non conformes
+  /parametrages/{codeParametrage}/numPage/{numPage}/nbOccurences/{nbOccurences}:
+    get:
+      tags:
+      - parametrage
+      summary: Liste des paramétrages avec pagination
+      operationId: lireListePage
+      parameters:
+      - $ref: '#/components/parameters/codeParametrage'
+      - name: numPage
+        in: path
+        description: Numéro de la page courante
+        required: true
+        schema:
+          type: integer
+      - name: nbOccurences
+        in: path
+        description: Nombre d'occurences retournées par page
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Objet pagination qui contient la liste des paramétrages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pagination'
+  /parametrages/{codeParametrage}/rechercher/numPage/{numPage}/nbOccurences/{nbOccurences}:
+    post:
+      tags:
+      - parametrage
+      summary: Liste des paramétrages selon les critères de recherche sur les champs
+        de paramétrage avec pagination
+      operationId: lireListeAvecCriteresPage
+      parameters:
+      - $ref: '#/components/parameters/codeParametrage'
+      - name: numPage
+        in: path
+        description: Numéro de la page courante
+        required: true
+        schema:
+          type: integer
+      - name: nbOccurences
+        in: path
+        description: Nombre d'occurences retournées par page
+        required: true
+        schema:
+          type: integer
+      - name: operateurLogique
+        in: query
+        description: Opérateur AND ou OR
+        required: true
+        schema:
+          type: string
+          enum:
+          - AND
+          - OR
+          default: AND
+      requestBody:
+        $ref: '#/components/requestBodies/Predicats'
+      responses:
+        '200':
+          description: Objet pagination qui contient la liste des paramétrages recherchés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pagination'
+        '400':
+          description: Paramètres de requête non conformes
+  /personnes:
+    get:
+      tags:
+      - personne
+      summary: Liste des personnes disponibles avec informations
+      operationId: lireListePersonnes
+      responses:
+        '200':
+          description: Les personnes disponibles ont été récupérées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonnePresentation'
+  /personnes/structure/{codeStructure}:
+    post:
+      tags:
+      - personne
+      summary: Créer une personne ou modifier si la personne existe déjà
+      operationId: creerOuModifierPersonne
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Personne'
+        description: La personne à créer ouu à modifier
+        required: true
+      responses:
+        '201':
+          description: La personne a été créé ou modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonnePresentation'
+        '400':
+          description: L'objet personne de la requête est non conforme
+  /personnes/typePersonne/{typePersonne}:
+    get:
+      tags:
+      - personne
+      summary: Liste des personnes disponibles avec informations
+      operationId: lireListePersonnesParType
+      parameters:
+      - name: typePersonne
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Les personnes disponibles ont été récupérées par type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PersonnePresentation'
+  /structures:
+    get:
+      tags:
+      - structure
+      summary: Liste des structures disponibles avec informations
+      operationId: lireListe
+      responses:
+        '200':
+          description: Les structures disponibles ont été récupérées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Structure'
+  /structures/codePegase/{codePegase}:
+    get:
+      tags:
+      - structure
+      summary: Lire la structure à partir du code structure de Pégase
+      operationId: lire
+      parameters:
+      - name: codePegase
+        in: path
+        description: Le code structure de Pégase
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: La structure ont été récupérée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+  /structures/avec-uai/codeStructure/{codeStructure}:
+    post:
+      tags:
+      - structure
+      summary: Créer une structure avec UAI
+      operationId: creerAvecUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StructureAvecUaiCreation'
+        description: La structure à créer
+        required: true
+      responses:
+        '201':
+          description: La structure a été créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+        '400':
+          description: L'objet structure de la requête est non conforme
+    put:
+      tags:
+      - structure
+      summary: Modifier une structure avec UAI
+      operationId: modifierAvecUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        description: La structure à modifier
+        required: true
+      responses:
+        '200':
+          description: La structure a été modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+        '400':
+          description: L'objet structure de la requête est non conforme
+  /structures/avec-uai/verifier/codeStructure/{codeStructure}:
+    post:
+      tags:
+      - structure
+      summary: Créer une structure avec UAI sans enregistrer
+      operationId: creerSansEnregistrerAvecUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StructureAvecUaiCreation'
+        description: La structure à créer
+        required: true
+      responses:
+        '201':
+          description: La structure a été créé sans enregistrer
+        '400':
+          description: L'objet structure de la requête est non conforme
+    put:
+      tags:
+      - structure
+      summary: Modifier une structure avec UAI sans enregistrer
+      operationId: modifierSansEnregistrerAvecUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        description: La structure à modifier sans enregistrer
+        required: true
+      responses:
+        '200':
+          description: La structure a été modifié sans enregistrer
+        '400':
+          description: L'objet structure de la requête est non conforme
+  /structures/sans-uai/codeStructure/{codeStructure}:
+    post:
+      tags:
+      - structure
+      summary: Créer une structure sans UAI
+      operationId: creerSansUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        description: La structure à créer
+        required: true
+      responses:
+        '201':
+          description: La structure a été créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+        '400':
+          description: L'objet structure de la requête est non conforme
+    put:
+      tags:
+      - structure
+      summary: Modifier une structure sans UAI
+      operationId: modifierSansUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        description: La structure à modifier
+        required: true
+      responses:
+        '200':
+          description: La structure a été modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Structure'
+        '400':
+          description: L'objet structure de la requête est non conforme
+  /structures/sans-uai/verifier/codeStructure/{codeStructure}:
+    post:
+      tags:
+      - structure
+      summary: Créer une structure sans UAI sans enregistrer
+      operationId: creerSansEnregistrerSansUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        description: La structure sans UAI pour tenter la création
+        required: true
+      responses:
+        '200':
+          description: La structure sans UAI a été créé sans erreur
+        '400':
+          description: L'objet structure de la requête est non conforme
+    put:
+      tags:
+      - structure
+      summary: Modifier une structure sans UAI sans enregistrer
+      operationId: modifierSansEnregistrerSansUAI
+      parameters:
+      - $ref: '#/components/parameters/codeStructure'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Structure'
+        description: La structure à modifier sans enregistrer
+        required: true
+      responses:
+        '200':
+          description: La structure a été modifié sans enregistrer
+        '400':
+          description: L'objet structure de la requête est non conforme
+components:
+  schemas:
+    NomenclatureAffichage:
+      type: object
+      properties:
+        codeNomenclature:
+          type: string
+          description: Code de la nomenclature
+        nomSingulier:
+          type: string
+          description: nom singulier de la nomenclature
+        nomPluriel:
+          type: string
+          description: nom pluriel de la nomenclature
+        url:
+          type: string
+          description: url de la nomenclature
+        estNomenclatureStandard:
+          type: boolean
+          description: retourne true si c'est une nomenclature standard
+    CodeGenere:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code interne de la nomenclature choisi par l'établissement
+    Nomenclature:
+      type: object
+      discriminator:
+        propertyName: typeNomenclature
+      properties:
+        typeNomenclature:
+          type: string
+          description: Discriminant
+        code:
+          type: string
+          description: Code interne de la nomenclature choisi par l'établissement
+        libelleCourt:
+          type: string
+          description: Libelle court de la nomenclature
+        libelleLong:
+          type: string
+          description: Nom complet de la nomenclature
+        libelleAffichage:
+          type: string
+          description: Libellé qui sera affiché aux usagers pour les fonctionnalités
+            à distance
+        prioriteAffichage:
+          type: integer
+          description: Plus le nombre est élevé plus il apparaît en priorité dans
+            la liste de valeurs
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité de la nomenclature
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité de la nomenclature
+        temoinVisible:
+          type: boolean
+          description: Témoin de la visibilité de la nomenclature
+        temoinLivre:
+          type: boolean
+          description: Témoin indiquant si la nomenclature a été livrée
+      example:
+        code: REG001
+        libelleCourt: FORM INIT
+        libelleLong: FORMATION INITIALE HORS APPRENTISSAGE
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+    BourseAideFinanciere:
+      description: Nomenclature des bourses et aides financières
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Code Bcn de l'occurrence
+          typeBourse:
+            type: string
+            description: Le type de la bourse ou de l'aide
+          temoinExoneration:
+            type: boolean
+            description: Temoin indique si l'etudiant est exonere
+          exoinsCom:
+            type: string
+            description: Variable relative à EXOINS SISE dans le cas ou l'exonération
+              est attribuée à un apprenant dont le pays de nationalité appartient
+              à UE, EEE et accords
+          exoinsExtra:
+            type: string
+            description: Variable relative à EXOINS SISE dans le cas ou l'exonération
+              est attribuée à un apprenant dont le pays de nationalité n'appartient
+              pas à UE, EEE et accords
+      example:
+        code: AID001
+        libelleCourt: BOURS.SOC
+        libelleLong: BOURSE SUR CRITERES SOCIAUX
+        libelleAffichage: BOURSE SUR CRITERES SOCIAUX
+        prioriteAffichage: 0
+        dateDebutValidite: 2002-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+        temoinExoneration: true
+        codeBcn: B
+        typeBourse: S
+        exoinsCOM: A1
+        exoinsExtra: B1
+    CategorieJuridique:
+      description: Nomenclature des catégories juridiques
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      example:
+        code: 200
+        libelleCourt: EPLE
+        libelleLong: ETABLT PUBLIC LOCAL D ENSEIGNEMENT
+        libelleAffichage: Etablissement public local d'enseignement (EPLE)
+        prioriteAffichage: 0
+        dateDebutValidite: 1970-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    TypeBac:
+      description: Nomenclature des types BAC
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+      example:
+        code: TYP001
+        libelleCourt: G
+        libelleLong: GENERAL
+        libelleAffichage: Général
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    TitreAcces:
+      description: Nomenclature des titres d'accès
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+      example:
+        code: TAS001
+        libelleCourt: BAC FRANCAIS
+        libelleLong: BACCALAUREAT FRANCAIS
+        libelleAffichage: Baccalauréat français
+        prioriteAffichage: 0
+        dateDebutValidite: 2018-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    CursusFormation:
+      description: Nomenclature des cursus de formation. Cette nomenclature est utilisée
+        dans l'offre de formation pour qualifier une formation
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Un code unique de l'occurence dans la base BCN
+      example:
+        code: GRC001
+        libelleCourt: CURS. LIC
+        libelleLong: CURSUS LICENCE
+        libelleAffichage: CURSUS LICENCE
+        prioriteAffichage: 0
+        dateDebutValidite: 2004-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinWeb: true
+        temoinLivre: false
+        codeBcn: L
+    PaysNationalite:
+      description: Nomenclature des pays et des nationalités
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          continent:
+            type: string
+            description: Continent du pays
+          libelleNationalite:
+            type: string
+            description: Libellé de la nationalité du pays
+          codeDrapeau:
+            type: string
+            description: Code mondial du pays pour affichage du drapeau
+          temoinUnionEuropeenne:
+            type: boolean
+            description: Indicateur d'appartenance à l'Union Européenne
+          temoinAccords:
+            type: boolean
+            description: Indicateur si la nationalité du pays fait partie de l'UEE
+              EEE et accords pour les calculs des droits
+      example:
+        code: 100
+        libelleCourt: FRANCE
+        libelleLong: FRANCE
+        libelleAffichage: France
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        continent: Europe
+        libelleNationalite: FRANÇAIS(E)
+        codeDrapeau: FR
+        temoinUnionEuropeenne: true
+        temoinAccords: false
+    Commune:
+      description: Nomenclature des codes communes et codes postaux
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codePostal:
+            type: string
+            description: Code postal du nomenclature
+          codeInsee:
+            type: string
+            description: Code Insee de la commune
+          codeInseeAncien:
+            type: string
+            description: L'ancien code insee de la commune
+          ligne5:
+            type: string
+            description: Ligne 5 de la commune
+          libelleAcheminement:
+            type: string
+            description: Le libelle acheminement de la commune
+    DomaineFormation:
+      description: Nomenclature des domaines des diplômes de l'enseignement supérieur
+        répartis selon leurs disciplines
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Un code unique de l'occurence dans la base BCN
+      example:
+        code: DOF001
+        libelleCourt: ALL
+        libelleLong: ARTS, LETTRES, LANGUES
+        libelleAffichage: ARTS, LETTRES, LANGUES
+        prioriteAffichage: 0
+        dateDebutValidite: 2014-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 1
+    MentionDiplome:
+      description: Nomenclature de déclinaison des licences, licences professionnelles
+        et master
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          typeDiplome:
+            type: string
+            description: Le type de diplôme
+          domaineFormationLst:
+            type: array
+            items:
+              $ref: '#/components/schemas/DomaineFormation'
+      example:
+        code: MED001
+        libelleCourt: ADMINISTRATION PUBLIQUE
+        libelleLong: ADMINISTRATION PUBLIQUE
+        libelleAffichage: Administration publique
+        prioriteAffichage: 0
+        dateDebutValidite: 2015-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+        typeDiplome: LICENCE
+        domaineFormationLst: []
+    ModePaiement:
+      description: Nomenclature des modes de paiement
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          temoinWeb:
+            type: boolean
+            description: Un témoin d'ouverture du mode de paiement au web
+      example:
+        code: MDP001
+        libelleCourt: CARTE-BANC
+        libelleLong: CARTE BANCAIRE
+        libelleAffichage: CARTE BANCAIRE
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinWeb: true
+        temoinLivre: false
+    NatureDiplome:
+      description: Nomenclature des Degré de reconnaissance du diplôme :diplôme national,
+        diplôme d'université homologué ou non, préparation aux concours, ....
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Le code BCN
+      example:
+        code: NAD001
+        libelleCourt: TIT. HOMOL
+        libelleLong: TITRE HOMOLOGUE RNCP
+        libelleAffichage: TITRE HOMOLOGUE RNCP
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 1
+    NiveauDiplome:
+      description: Nomenclature des niveaux de diplôme. Cette nomenclature est utilisée
+        dans l'offre de formation pour qualifier une formation diplômante.
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Un code unique de l'occurence dans la base BCN
+      example:
+        code: NID001
+        libelleCourt: NIVEAU I (> MAITRISE)
+        libelleLong: NIVEAU I (> MAITRISE)
+        libelleAffichage: Niveau I (3ème cycle, supérieur à maîtrise)
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 1
+    NiveauFormation:
+      description: Nomenclature descriptive des formations et diplômes limitée à l'enseignement
+        supérieur. Spécifique du système SISE.
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Un code unique de l'occurence dans la base BCN
+      example:
+        code: NIF001
+        libelleCourt: BAC ET -
+        libelleLong: INFÉRIEUR OU ÉGAL AU BACCALAUREAT
+        libelleAffichage: INFÉRIEUR OU ÉGAL AU BACCALAURÉAT
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 0
+    MentionBac:
+      description: Nomenclature de déclinaison des licences, licences professionnelles
+        et master
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      example:
+        code: MEN001
+        libelleCourt: SANS MENTION
+        libelleLong: SANS MENTION
+        libelleAffichage: Sans mention
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    QuotiteActivite:
+      description: Nomenclature des quotités travaillées
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Code Bcn de l'occurrence
+      example:
+        code: QUA001
+        libelleCourt: SANS OBJET
+        libelleLong: SANS OBJET
+        libelleAffichage: SANS OBJET
+        prioriteAffichage: 0
+        dateDebutValidite: 1993-08-02T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+        codeBcn: 0
+    RegimeInscription:
+      description: Nomenclature des régimes d'inscription possibles
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeSISEIns:
+            type: integer
+            description: Code du régime d'inscription à exporter dans l'enquête SISE
+              Inscription. Si il est renseigné, il doit être égal à 10, 11, 12, 20
+              ou 22. Si il n'est pas renseigné, les inscriptions sur ce régime ne
+              seront pas exportées
+          codeSISERslt:
+            type: integer
+            description: 'Code SISE de l''état d''inscription lors de la remontée
+              Résultats. S''il est renseigné, il doit prendre les valeurs: 11, 12,
+              20, 22 ou 23. Ce champ doit être obligatoirement renseigné si un code
+              SISE ins est saisi.'
+          temoinCVEC:
+            type: boolean
+            description: Ce témoin rend obligatoire la saisie du numéro de certificat
+              CVEC à l'inscription
+          financementPossible:
+            type: boolean
+            description: Indique si les frais d'inscription avec ce régime peuvent
+              être pris en charge par un tiers
+          droitABourse:
+            type: boolean
+            description: Indique si le régime est ouvert à la bourse sur critère sociaux
+              (Crous-Aglaé)
+          codeBcn:
+            type: string
+            description: Un code unique de l'occurence dans la base BCN
+      example:
+        code: REG001
+        libelleCourt: FORM INIT
+        libelleLong: FORMATION INITIALE HORS APPRENTISSAGE
+        libelleAffichage: FORMATION INITIALE HORS APPRENTISSAGE
+        codeSISEIns: 10
+        codeSISERslt: 11
+        temoinCVEC: true
+        financementPossible: false
+        droitABourse: true
+        codeBcn: 10
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+    RegimeSpecialEtudes:
+      description: Nomenclature des régimes spéciaux d'études
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      example:
+        code: RSE001
+        libelleCourt: SPORTS-HN
+        libelleLong: SPORTIFS DE HAUT NIVEAU
+        libelleAffichage: Sportifs de haut niveau
+        prioriteAffichage: 100
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+    SituationAnneePrecedente:
+      description: Nomenclature utilisée à l'inscription, pour préciser la provenance
+        d'un apprenant, elle est également utilisée dans le cadre de l'enquête SISE
+        pour la variable SITUPRE
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Le code BCN
+      example:
+        code: SAP321
+        codeBcn: 1
+        libelleCourt: INST CATHO
+        libelleLong: INSTITUTS CATHOLIQUES
+        libelleAffichage: INSTITUTS CATHOLIQUE
+        prioriteAffichage: 0
+        dateDebutValidite: 2000-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    SituationFamiliale:
+      description: Nomenclature des situations familiales possibles
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Le code BCN de la valeur
+      example:
+        code: SIF001
+        libelleCourt: CELIBAT.
+        libelleLong: CELIBATAIRE
+        libelleAffichage: Célibataire
+        prioriteAffichage: 0
+        dateDebutValidite: 1995-07-21T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        codeBcn: C
+        temoinLivre: true
+    SituationMilitaire:
+      description: Nomenclature des situations militaires possibles
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Le code BCN de la valeur
+      example:
+        code: SIM001
+        libelleCourt: SC ENGAGEM
+        libelleLong: ENGAGEMENT/VOLONTARIAT SERVICE CIVIQUE
+        libelleAffichage: Engagement/volontariat service civique (article 120-33 du
+          CSN)
+        prioriteAffichage: 0
+        dateDebutValidite: 2015-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        codeBcn: E
+        temoinLivre: false
+    TypeClassePreparatoire:
+      description: Nomenclature des types de classes de préparatoires
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: Un code unique de l'occurennce dans la base BCN
+      example:
+        code: TCP001
+        codeBcn: 11101
+        libelleCourt: MPSI
+        libelleLong: MATHS PHYSIQUE ET SCIENCES DE L'INGENIEUR
+        libelleAffichage: null
+        prioriteAffichage: 0
+        dateDebutValidite: 2008-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    TypeDernierDiplomeObtenu:
+      allOf:
+      - $ref: '#/definitions/Nomenclature'
+      - type: object
+        properties:
+          codeBcn:
+            type: string
+            description: un code  de l'occurennce dans la base BCN
+      example:
+        code: TCP001
+        codeBcn: 11101
+        libelleCourt: MPSI
+        libelleLong: MATHS PHYSIQUE ET SCIENCES DE L'INGENIEUR
+        libelleAffichage: null
+        prioriteAffichage: 0
+        dateDebutValidite: 2008-09-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    TypeDiplome:
+      description: Nomenclature de classification des diplômes :Licence, licence professionnelle,
+        Ingénieur, ...
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Le code BCN
+          cursusFormation:
+            $ref: '#/components/schemas/CursusFormation'
+          niveauFormation:
+            $ref: '#/components/schemas/NiveauFormation'
+          natureDiplome:
+            $ref: '#/components/schemas/NatureDiplome'
+      example:
+        code: TYD001
+        libelleCourt: AUT.NAT.B3
+        libelleLong: AUTRES DIPL. NATIONAUX NIV. FORM. BAC+3
+        libelleAffichage: AUTRES DIPL. NATIONAUX NIV. FORM. BAC+3
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: ND
+        natureDiplome:
+          code": NAD001
+          libelleCourt": DIPL.HABIL
+          libelleLong": DIPLOME ACCREDITE/HABILITE NATIONALEMENT
+          libelleAffichage": DIPLOME ACCREDITE/HABILITE NATIONALEMENT
+          prioriteAffichage": 0
+          dateDebutValidite": 1990-01-01T00:00:00Z
+          dateFinValidite": null
+          temoinVisible": true
+          temoinLivre": true
+          codeBcn": 1
+        niveauFormation:
+          code: NIF004
+          libelleCourt: BAC+3
+          libelleLong: BAC+3
+          libelleAffichage: BAC+3
+          prioriteAffichage: 0
+          dateDebutValidite: 1990-01-01T00:00:00Z
+          dateFinValidite: null
+          temoinVisible: true
+          temoinLivre: true
+          codeBcn: 3
+        cursusFormation:
+          code: GRC001
+          libelleCourt: CURS. LIC
+          libelleLong: CURSUS LICENCE
+          libelleAffichage: CURSUS LICENCE
+          prioriteAffichage: 0
+          dateDebutValidite: 2014-09-01T00:00:00Z
+          dateFinValidite: null
+          temoinVisible: true
+          temoinLivre: true
+          codeBcn: L
+    SerieBac:
+      description: Nomenclature des séries du baccalauréat et équivalences
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Le code BCN
+          titreAcces:
+            $ref: '#/components/schemas/TitreAcces'
+          typeBac:
+            $ref: '#/components/schemas/TypeBac'
+      example:
+        code: BAC001
+        libelleCourt: S-SCIENTIF
+        libelleLong: SCIENTIFIQUE
+        libelleAffichage: SCIENTIFIQUE3
+        prioriteAffichage: 999
+        dateDebutValidite: 1995-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: S
+        titreAcces:
+          code": TAS001
+          libelleCourt": BAC FRANCAIS
+          libelleLong": BACCALAUREAT FRANCAIS
+          libelleAffichage": Baccalauréat français
+          prioriteAffichage": 0
+          dateDebutValidite": 2018-01-01T00:00:00Z
+          dateFinValidite": null
+          temoinVisible": true
+          temoinLivre": true
+        typeBac:
+          code: TYB001
+          libelleCourt: G
+          libelleLong: GENERAL
+          libelleAffichage: Général
+          prioriteAffichage: 0
+          dateDebutValidite: 1990-01-01T00:00:00Z
+          dateFinValidite: null
+          temoinVisible: true
+          temoinLivre: true
+    CategorieSocioprofessionnelle8:
+      description: Nomenclature des professions et catégories socio-professionnelles
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Le code BCN
+      example:
+        code: PCA001
+        libelleCourt: ARTIS COMM
+        libelleLong: ARTISANS COMMERCANTS CHEFS D'ENTREPRISE
+        libelleAffichage: Artisans, commerçants et chefs d'entreprise
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 2
+    SituationEmploi:
+      description: Nomenclature des situations d'emploi
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Le code BCN
+      example:
+        code: PCB001
+        libelleCourt: EMPL
+        libelleLong: OCCUPE UN EMPLOI
+        libelleAffichage: OCCUPE UN EMPLOI
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 1
+    CategorieSocioprofessionnelle:
+      description: Nomenclature des professions et catégories socio-professionnelles
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeBcn:
+            type: string
+            description: Le code BCN
+          categorieSocioprofessionnelle8:
+            $ref: '#/components/schemas/CategorieSocioprofessionnelle8'
+          situationEmploiLst:
+            type: array
+            items:
+              $ref: '#/components/schemas/SituationEmploi'
+      example:
+        code: PCS001
+        libelleCourt: AGRI EXPL
+        libelleLong: AGRICULTEUR EXPLOITANT
+        libelleAffichage: AGRICULTEUR EXPLOITANT
+        prioriteAffichage: 0
+        dateDebutValidite: 1991-02-28T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeBcn: 10
+    SpecificiteUai:
+      description: Nomenclature des spécificités UAI
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          numeroUai:
+            type: string
+            description: Le numéro UAI
+          specificiteUai:
+            type: string
+            description: La spécificité UAI
+          specificiteUaiLibe:
+            type: string
+            description: Le libellé de la spécificité UAI
+      example:
+        numeroUai: 0010001W
+        specificiteUai: STS
+        specificiteUaiLibe: Présence d'une section de techniciens supérieurs
+        dateDebutValidite: 2010-09-01T00:00:00Z
+        dateFinValidite: null
+    Departement:
+      description: Nomenclature des départements en métropole, DOM, TOM et COM selon
+        la codification INSEE
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          codeAcademie:
+            type: string
+            description: Le code académie
+          codeRegion:
+            type: string
+            description: Le code Région
+          codeDepartementImmatriculation:
+            type: string
+            description: Le code département immatriculation
+          codeDepartementInsee2:
+            type: string
+            description: Le code département Insee 2
+          codeSiseDepartement:
+            type: string
+            description: Le code SISE département
+      example:
+        code: 1
+        libelleCourt: AIN
+        libelleLong: AIN
+        libelleAffichage: Ain
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+        codeAcademie: 10
+        codeRegion: 84
+        codeDepartementImmatriculation: 1
+        codeDepartementInsee2: 1
+        codeSiseDepartement: null
+    TypeUai:
+      description: Nomenclature des types UAI
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          typeUai:
+            type: string
+            description: Le type de l'UAI
+          typeUaiLibe:
+            type: string
+            description: Le libellé du type de l'UAI
+      example:
+        typeUai: LP
+        typeUaiLibe: Lycées professionnels
+    EtablissementFrancais:
+      description: Nomenclature des écoles et des établissements d'enseignement français
+        en France et à l'étranger
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          numeroUai:
+            type: string
+            description: Le numéro de l'UAI
+          typeUai:
+            $ref: '#/components/schemas/TypeUai'
+          denominationPrincipale:
+            type: string
+            description: La dénomination principale de l'UAI
+          natureUai:
+            type: string
+            description: Le code de la nature de l'UAI
+          natureUaiLibe:
+            type: string
+            description: Le libellé de la nature de l'UAI
+          etatEtablissement:
+            type: string
+            description: Le code état de l'établissement
+          etatEtablissementLibe:
+            type: string
+            description: Le libellé de l'état de l'établissement
+          ministereTutelle:
+            type: string
+            description: Le code du ministère tutelle de l'établissement
+          ministereTutelleLibe:
+            type: string
+            description: Le libellé du ministère tutelle de l'établissement
+          tutelle2:
+            type: string
+            description: Le code de tutelle2
+          tutelle2Libe:
+            type: string
+            description: Le code état de l'établissement
+          secteurPublicPrive:
+            type: string
+            description: Le code du secteur de l'établissement privée/public
+          secteurPublicPriveLibe:
+            type: string
+            description: Le libellé du secteur de l'établissement privée/public
+          sigleUai:
+            type: string
+            description: Le sigle de l'UAI
+          categorieJuridique:
+            type: string
+            description: Le code de la catégorie juridique de l'UAI
+          categorieJuridiqueLibe:
+            type: string
+            description: le libellé de la catégorie juridique de l'UAI
+          contratEtablissement:
+            type: string
+            description: Le code du contrat l'état de l'établissement
+          contratEtablissementLibe:
+            type: string
+            description: Le libellé du contrat l'état de l'établissement
+          categorieFinanciere:
+            type: string
+            description: Le code de la catégorie financière
+          categorieFinanciereLibe:
+            type: string
+            description: Le libellé de la catégorie financière
+          situationComptable:
+            type: string
+            description: Le code de la situation comptable
+          situationComptableLibe:
+            type: string
+            description: Le libellé de la situation comptable
+          niveauUai:
+            type: string
+            description: Le code du niveau de l'UAI
+          niveauUaiLibe:
+            type: string
+            description: Le libellé du niveau de l'UAI
+          commune:
+            type: string
+            description: Le code de la commune
+          communeLibe:
+            type: string
+            description: Le libellé de la commune
+          academie:
+            type: string
+            description: Le code de l'académie
+          academieLibe:
+            type: string
+            description: Le libellé de l'académie
+          paysNationalite:
+            $ref: '#/components/schemas/PaysNationalite'
+          departement:
+            $ref: '#/components/schemas/Departement'
+          patronymeUai:
+            type: string
+            description: Le code de la commune
+          hebergementEtablissement:
+            type: string
+            description: Le libellé de la commune
+          hebergementEtablissementLibe:
+            type: string
+            description: Le code de l'académie
+          numeroSirenSiretUai:
+            type: string
+            description: Le numéro SIREN SIRET UAI
+          numeroFinessUai:
+            type: string
+            description: Le numéro FINESS
+          dateDerniereMiseAJour:
+            type: string
+            format: date
+            description: La date de la dernière mise à jour
+          lieuDitUai:
+            type: string
+            description: Le lieu dit de l'UAI
+          adresseUai:
+            type: string
+            description: L'adresse de l'UAI
+          boitePostaleUai:
+            type: string
+            description: La boîte postale de l'UAI
+          codePostalUai:
+            type: string
+            description: Le code postale de l'UAI
+          etatSiradUai:
+            type: string
+            description: L'état SIRAD de l'UAI
+          localiteAcheminementUai:
+            type: string
+            description: Localité d'acheminement de l'UAI
+          paysEtrangerAcheminement:
+            type: string
+            description: Le pays étranger de l'acheminement
+          numeroTelephoneUai:
+            type: string
+            description: Le numéro téléphone de l'UAI
+          numeroTelecopieurUai:
+            type: string
+            description: Le numéro télécopieur de l'UAI
+          mentionDistribution:
+            type: string
+            description: La mention distribution
+          melUai:
+            type: string
+            description: L'adresse de courriel de l'établissement
+          siteWeb:
+            type: string
+            description: Le site Web de l'établissement
+          coordonneeX:
+            type: string
+            description: Le Coordonnées X de la géolocalisation
+          coordonneeY:
+            type: string
+            description: Le coordonnées Y de la géolocalisation
+          appariement:
+            type: string
+            description: L'appariement de la géolocalisation
+          appariementComplement:
+            type: string
+            description: Le complément d'appariement de la géolocalisation
+          localisation:
+            type: string
+            description: La localisatione
+          localisationComplement:
+            type: string
+            description: Le complément de la localisation
+          dateGeolocalisation:
+            type: string
+            format: date
+            description: La date de la localisation
+          source:
+            type: string
+            description: La source de la localisation
+      example:
+        numeroUai: 0010001W
+        denominationPrincipale: LP LYCEE DES METIERS
+        libelleAffichage: Lycée professionnel Alexandre Bérard - Lycée des métiers
+          de l'énergie et de l'habitat
+        temoinVisible: true
+        temoinLivre: true
+        prioriteAffichage: 0
+        natureUai: 320
+        natureUaiLibe: Lycée professionnel
+        ministereTutelle: 6
+        ministereTutelleLibe: ministère de l'éducation nationale
+        secteurPublicPrive: PU
+        secteurPublicPriveLibe: Public
+        sigleUai: LP LYC METIER
+        commune: 516
+        communeLibe: Ambérieu-en-Bugey
+        academie: 10
+        academieLibe: Lyon
+        lieuDitUai: null
+        adresseUai: 223 rue ALEXANDRE BERARD
+        boitePostaleUai: null
+        codePostalUai: 832
+        etatSiradUai: 1
+        localiteAcheminementUai: AMBERIEU EN BUGEY
+        paysEtrangerAcheminement: null
+        numeroTelephoneUai: 04 74 38 01 99
+        numeroTelecopieurUai: 04 74 38 97 16
+        mentionDistribution: ce.0010001W@ac-lyon.fr
+        melUai: ce.0010001W@ac-lyon.fr
+        siteWeb: http://www.lpberard-amberieu.fr/
+    EtablissementEtranger:
+      description: Nomenclature des écoles et des établissements étrangers
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          adresse1:
+            type: string
+            description: Le 1ère adresse
+          adresse2:
+            type: string
+            description: Le 2ème adresse
+          adresse3:
+            type: string
+            description: Le 3ème adresse
+          adresse4:
+            type: string
+            description: Le 4ème adresse
+          adresse5:
+            type: string
+            description: Le 5ème adresse
+          mail:
+            type: string
+            description: Le mail
+          telephone:
+            type: string
+            description: Le téléphone
+          localiteAcheminement:
+            type: string
+            description: La localité d'acheminement
+          paysNationalite:
+            $ref: '#/components/schemas/PaysNationalite'
+      example:
+        code: TYD001
+        libelleCourt: AUT.NAT.B3
+        libelleLong: AUTRES DIPL. NATIONAUX NIV. FORM. BAC+3
+        libelleAffichage: AUTRES DIPL. NATIONAUX NIV. FORM. BAC+3
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-01T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: true
+    DiplomeSise:
+      description: Nomenclature des diplômes SISE
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeNomenclature:
+            type: string
+            description: Discriminant
+          typeDiplome:
+            $ref: '#/components/schemas/TypeDiplome'
+          voieLmd:
+            type: string
+            description: Le code LMD
+          libelleIntitule1:
+            type: string
+            description: Le libellé intitulé 1
+          libelleIntitule2:
+            type: string
+            description: Le libellé intitulé 2
+          groupeSpecialite:
+            type: string
+            description: Le groupe de la spécialité
+          lettreSpecialite:
+            type: string
+            description: La lettre de la spécialité
+          secteurDisciplinaireSise:
+            type: string
+            description: Le secteur disciplinaire SISE
+          citeDomaineFormation:
+            type: string
+            description: Le CITE domaine formation
+          duree:
+            type: string
+            description: La durée
+          natureDiplome:
+            $ref: '#/components/schemas/NatureDiplome'
+          categorieFormationSise:
+            type: string
+            description: La catégorie formation SISE
+          citeDomaineDetaille:
+            type: string
+            description: Le CITE domaine détaillé
+          secteurDisciplinaireDetailleSise:
+            type: string
+            description: Le secteur disciplinaire détaillé SISE
+    Predicat:
+      description: Un prédicat est définit par un opérateur( =, !=, <, >, <=, >=,
+        ~) et la valeur à filtrer sous forme de chaine de carctères
+      properties:
+        operateur:
+          type: string
+        valeur:
+          type: string
+      example:
+        operateur: <
+        proriteAffichage: 10
+    Predicats:
+      description: Un tableau associatif composé de (attribut, Predicat)
+      properties:
+        default:
+          $ref: '#/components/schemas/Predicat'
+      additionalProperties:
+        $ref: '#/components/schemas/Predicat'
+    Pagination:
+      description: Objet pagination contenant le liste des nomenclatures et les métas
+        données liés à la pagination
+      properties:
+        nomenclatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/Nomenclature'
+        nbTotalOccurences:
+          type: integer
+          format: int64
+        nbTotalPages:
+          type: integer
+          format: int32
+        nbOccurences:
+          type: integer
+          format: int32
+        numPage:
+          type: integer
+          format: int32
+    TypeObjetFormation:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          categorieObjet:
+            type: string
+            description: Catégorie de l'objet de formation
+    NatureTypeObjetFormation:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          typeObjetFormation:
+            $ref: '#/components/schemas/TypeObjetFormation'
+    TypeFormation:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    NatureGroupement:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    TypeGroupe:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    TypeResultat:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          positif:
+            type: boolean
+            description: Indication si le résultat est positif ou négatif
+    TypeControle:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    TypeNotation:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    GradePointAverage:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          valeur:
+            type: number
+            format: double
+            description: valeur du GPA
+    NotationEcts:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          valeur:
+            type: string
+            description: valeur de la notation ECTS
+    MentionHonorifique:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    TypeAmenagement:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          motif:
+            type: string
+            description: Le motif du type d'aménagement
+          portee:
+            type: string
+            description: La portée du type d'aménagement
+          priseEnCompte:
+            type: string
+            description: La prise en compte du type d'aménagement
+    TypeHeure:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          ponderationHetd:
+            type: number
+            format: float
+            description: heure équivalent TD
+    ModaliteEnseignement:
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    CanalCommunication:
+      description: Paramétrage canaux de communication disponibles dans Pégase. Les
+        canaux de communication sont utilisés dans le module Inscription dans la définition
+        des contacts de l'apprenant.
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    ChampsFormation:
+      description: Paramétrage des champs de formation
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+    ConcoursAdmission:
+      description: Paramétrage des concours sur lesquels l'établissement recrute
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      example:
+        code: CON001
+        libelleCourt: A-BIO
+        libelleLong: Concours A BIO
+        libelleAffichage: Concours A BIO
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+    PieceFournir:
+      description: Paramétrage des documents pouvant être demandés dans le cadre de
+        la candidature ou de l'’inscription
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      example:
+        code: PAF001
+        libelleCourt: PIECES IDENTITE
+        libelleLong: PIECES IDENTITE
+        libelleAffichage: Pièce d'identité
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+    ProfilExonerant:
+      description: Paramétrage des profils apprenants bénéficiant d’exonération sur
+        les droits d'inscriptions
+      allOf:
+      - $ref: '#/components/schemas/Nomenclature'
+      - type: object
+        properties:
+          commentaire:
+            type: string
+            description: Permet au gestionnaire de savoir dans quel cas ce profil
+              est justifié
+          exoinsExtra:
+            type: string
+            description: Variable relative aux exonérations à transmettre à SISE
+      example:
+        code: PRF001
+        libelleCourt: PUPILLE
+        libelleLong: PUPILLE DE LA NATION
+        libelleAffichage: Pupille de la nation
+        prioriteAffichage: 0
+        dateDebutValidite: 1990-01-31T00:00:00Z
+        dateFinValidite: null
+        temoinVisible: true
+        temoinLivre: false
+        commentaire: null
+        exoinsExtra: B1
+    Parametrages:
+      description: Objet contenant l'objet nature type d'objet de formation d'origine
+        et l'objet nature de type de formation
+      properties:
+        natureTypeObjetFormationOrigine:
+          $ref: '#/components/schemas/NatureTypeObjetFormation'
+        natureTypeObjetFormationModifie:
+          $ref: '#/components/schemas/NatureTypeObjetFormation'
+    Personne:
+      type: object
+      properties:
+        civilite:
+          type: string
+          description: Civilté de la personne
+        sexe:
+          type: string
+          description: Sexe de la personne
+        nomUsage:
+          type: string
+          description: Nom d'usage de la personne
+        nomFamille:
+          type: string
+          description: Nom patronymique de la personne
+        prenom1:
+          type: string
+          description: Prénom principal de la personne
+        prenom2:
+          type: string
+          description: Prénom secondaire de la personne
+        prenom3:
+          type: string
+          description: Troisième prénom de la personne
+        dateNaissance:
+          type: string
+          description: Date de naissance de la personne
+          format: date
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité de la personne
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité de la personne
+        personneUtilisateurLst:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonneUtilisateur'
+          description: Association entre personne et utilisateur
+        sourcePersonneLst:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourcePersonne'
+          description: Source d'alimentation de personne (GRHUM, SINAPS, SIRH etablissement,
+            ...)
+        personneTypePersonneLst:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonneTypePersonne'
+          description: Association entre personne et type personne
+    PersonnePresentation:
+      type: object
+      properties:
+        codeMetier:
+          type: string
+          description: Code métier de la personne = PER + numéro
+        civilite:
+          type: string
+          description: Civilté de la personne
+        sexe:
+          type: string
+          description: Sexe de la personne
+        nomUsage:
+          type: string
+          description: Nom d'usage de la personne
+        nomFamille:
+          type: string
+          description: Nom patronymique de la personne
+        prenom1:
+          type: string
+          description: Prénom principal de la personne
+        prenom2:
+          type: string
+          description: Prénom secondaire de la personne
+        prenom3:
+          type: string
+          description: Troisième prénom de la personne
+        dateNaissance:
+          type: string
+          description: Date de naissance de la personne
+          format: date
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité de la personne
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité de la personne
+        personneUtilisateurLst:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonneUtilisateur'
+          description: Association entre personne et utilisateur
+        sourcePersonneLst:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourcePersonne'
+          description: Source d'alimentation de personne (GRHUM, SINAPS, SIRH etablissement,
+            ...)
+        personneTypePersonneLst:
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonneTypePersonne'
+          description: Association entre personne et type personne
+    PersonneUtilisateur:
+      type: object
+      properties:
+        identifiantUtilisateur:
+          type: string
+          description: Identifiant de l'utilistauer
+        sourceUtilisateur:
+          type: string
+          description: Source de l'utilisateur (GRHUM, SINAPS, LDAP, SIRH,...)
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité
+    SourcePersonne:
+      type: object
+      properties:
+        identifiantPersonne:
+          type: string
+          description: Identifiant de la personne
+        basePersonne:
+          type: string
+          description: Source de la personne (GRHUM, SINAPS, LDAP, SIRH,...)
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité
+    TypePersonne:
+      type: object
+      properties:
+        libelle:
+          type: string
+          description: Type de la personne (Administratif, Enseignant, ...)
+    PersonneTypePersonne:
+      type: object
+      properties:
+        typePersonne:
+          $ref: '#/components/schemas/TypePersonne'
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité
+    Structure:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code Interne Pégase de l'établissement (choisi par l'établissement)
+            - Clé fonctionnelle
+        codeReferentielExterne:
+          type: string
+          nullable: true
+          description: id Référentiel Externe de pegase
+        codeUai:
+          type: string
+          description: Code national de l'établissement d'enseignement supérieur,
+            fourni par le ministère
+        denominationPrincipale:
+          type: string
+          description: Libellé court
+        denominationComplementaire:
+          type: string
+          description: Libellé long
+        appellationOfficielle:
+          type: string
+          description: Libellé affichage
+        commentaire:
+          type: string
+          description: Commentaire
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité de la structure
+        dateFinValidite:
+          type: string
+          format: date
+          nullable: true
+          description: Date de la fin de la validité de la structure
+        temoinVisible:
+          type: boolean
+          description: Témoin de la visibilité
+        sigleUai:
+          type: string
+          nullable: true
+          description: Le sigle de l'UAI
+        typeUaiCode:
+          type: string
+          description: Le type de l'UAI
+        typeUaiLibelle:
+          type: string
+          description: Le libellé de type de l'UAI
+        categorieJuridiqueCode:
+          type: string
+          description: Le code de la Categorie Juridique
+        categorieJuridiqueLibelle:
+          type: string
+          description: Le libellé de la Categorie Juridique
+        adresse:
+          $ref: '#/components/schemas/Adresse'
+        responsable:
+          $ref: '#/components/schemas/Responsable'
+    StructureAvecUaiCreation:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Code Interne Pégase de l'établissement (choisi par l'établissement)
+            - Clé fonctionnelle
+        codeUai:
+          type: string
+          description: Code national de l'établissement d'enseignement supérieur,
+            fourni par le ministère
+        codeReferentielExterne:
+          type: string
+          description: id Référentiel Externe de pegase
+        temoinVisible:
+          type: boolean
+          description: Témoin de la visibilité
+        commentaire:
+          type: string
+          description: Commentaire
+        responsable:
+          $ref: '#/components/schemas/Responsable'
+    Adresse:
+      type: object
+      properties:
+        adresse1:
+          type: string
+          description: Adresse1
+        adresse2:
+          type: string
+          description: Complément adresse
+        adresse3:
+          type: string
+          description: Complément adresse
+        adresse4:
+          type: string
+          description: Complément adresse
+        adresse5:
+          type: string
+          description: Complément adresse
+        codePostal:
+          type: string
+          description: Code postale pour structure
+        localiteAcheminement:
+          type: string
+          description: Localite d'acheminement pour structure
+        codePaysAcheminement:
+          type: string
+          description: Code du pays pour structure avec UAI
+        libelleCourtPaysAcheminement:
+          type: string
+          description: LibelleCourt pour structure avec UAI
+        pays:
+          $ref: '#/components/schemas/PaysNationalite'
+        commune:
+          $ref: '#/components/schemas/Commune'
+    Responsable:
+      type: object
+      properties:
+        nom:
+          type: string
+          description: nom
+        prenom:
+          type: string
+          description: prenom
+        titre:
+          type: string
+          description: titre
+        dateDebutValidite:
+          type: string
+          format: date
+          description: Date du début de la validité de responsable
+        dateFinValidite:
+          type: string
+          format: date
+          description: Date de la fin de la validité de responsable
+  requestBodies:
+    Predicats:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Predicats'
+      description: La liste de champs de nomenclature à filtrer
+      required: true
+    Parametrages:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Parametrages'
+      description: natureTypeObjetFormations définit la nature de type d'objet de
+        formation d'origine (natureTypeObjetFormationOrigine) et la nature de type
+        d'objet de formation contenant les valeurs à modifier (natureTypeObjetFormationModifie)
+      required: true
+  parameters:
+    codeParametrage:
+      name: codeParametrage
+      in: path
+      required: true
+      description: Le code du paramétrage
+      schema:
+        type: string
+      example: TypeObjetFormation
+    codeNomenclature:
+      name: codeNomenclature
+      in: path
+      required: true
+      description: Le code de la nomenclature
+      schema:
+        type: string
+      example: RegimeInscription
+    codeStructure:
+      name: codeStructure
+      in: path
+      required: true
+      description: Le code metier de la structure avec autorisations
+      schema:
+        type: string
+      example: ETAB00
+    code:
+      name: code
+      in: path
+      required: true
+      description: Le code métier de la nomenclature ou du paramétrage à traiter
+      schema:
+        type: string
+      example: REG001
+    dateDebutValidite:
+      name: dateDebutValidite
+      in: path
+      required: true
+      description: La date de début da validité de la nomenclature ou du paramétrage
+      schema:
+        type: string
+        format: date
+    example: '2020-03-04'
+  securitySchemes:
+    idTokenAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes: {}
