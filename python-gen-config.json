@@ -1,6 +1,3 @@
 {
-  "packageName": "pegase_ref_client",
-  "packageVersion": "1.3.0",
-  "projectName": "atelier-api",
-  "pythonAttrNoneIfUnset": "true"
+  "pythonAttrNoneIfUnset": true
 }

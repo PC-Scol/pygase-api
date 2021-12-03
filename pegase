@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+import click
+from ref.structure import structure
+from mof.extraction import extractions
+
+
+@click.group()
+def pegase():
+    pass
+
+
+pegase.add_command(structure)
+pegase.add_command(extractions)
+
+
+if __name__ == '__main__':
+    pegase()

@@ -1,0 +1,12 @@
+# dev
+.vscode/
+.env/
+__pycache__/
+openapi-generator-cli.jar
+
+# build
+dist/
+*.egg-info/
+generated/
+
+conf.ini
