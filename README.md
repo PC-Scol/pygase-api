@@ -63,7 +63,7 @@ python-client-generator -i https://pegase-swagger-ui.bas-esup.pc-scol.fr/fr.pcsc
 Vérifier au préalable de récupérer la dernière version de fichier open-api en consultant [pegase-swagger-ui](https://pegase-swagger-ui.bas-esup.pc-scol.fr/)
 
 ```bash
-python-client-generator -i https://pegase-swagger-ui.bas-esup.pc-scol.fr/fr.pcscol.mof-api/mof-application-api-v1/mof-application-api-v1-2.2.0.yml -c python-gen-config.json -o generated/mof --package-name mof-client --skip-validate-spec
+python-client-generator -i https://pegase-swagger-ui.bas-esup.pc-scol.fr/fr.pcscol.mof-api/mof-application-api-v1/mof-application-api-v1-2.2.0.yml -o generated/mof --package-name mof-client --skip-validate-spec
 ```
 
 ## Installer les clients et les dépendances pour l'exercice
