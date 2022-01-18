@@ -30,7 +30,7 @@ curl -d "username=svc-api&password=???&token=true" \
 - Télécharger :
 
 ```bash
-wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.3.0/openapi-generator-cli-5.3.0.jar -O openapi-generator-cli.jar
+wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/5.3.1/openapi-generator-cli-5.3.1.jar -O openapi-generator-cli.jar
 ```
 
 - Créer un alias pour faciliter l'appel de la commande : 
